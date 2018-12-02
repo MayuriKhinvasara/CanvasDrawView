@@ -11,12 +11,12 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import mk.android.com.canvasdrawview.model.Shape;
+import mk.android.com.canvasdrawview.presenter.CanvasTouch;
 import mk.android.com.canvasdrawview.presenter.ShapesPresenter;
 
 /**
@@ -29,6 +29,7 @@ public class CustomView extends View {
     private int x = 50;
     private int y = 50;
     List<Shape> historyList = new ArrayList<>();
+    CanvasTouch canvasTouch;
 
     public CustomView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -61,18 +62,21 @@ public class CustomView extends View {
         this.canvas = canvas;
         Log.d(TAG, "  onDraw called");
         for (Shape shape : getHistoryList()) {
-            switch (shape.getType()) {
-                case CIRCLE:
-                    drawPaint.setColor(Color.BLUE);
-                    canvas.drawCircle(shape.getX(), shape.getY(), RADIUS, drawPaint);
-                    break;
+            // for(Shape shape1 : shape.getTransformationList()){
+            if (shape.isVisible()) {
+                switch (shape.getType()) {
+                    case CIRCLE:
+                        drawPaint.setColor(Color.BLUE);
+                        canvas.drawCircle(shape.getX(), shape.getY(), RADIUS, drawPaint);
+                        break;
 
-                case RECTANGLE:
-                    drawRectangle(shape.getX(), shape.getY());
-                    break;
-                case TRIANGLE:
-                    drawTriangle(shape.getX(), shape.getY(), (int) (2 * RADIUS));
-                    break;
+                    case RECTANGLE:
+                        drawRectangle(shape.getX(), shape.getY());
+                        break;
+                    case TRIANGLE:
+                        drawTriangle(shape.getX(), shape.getY(), (int) (2 * RADIUS));
+                        break;
+                }
             }
         }
     }
@@ -80,11 +84,14 @@ public class CustomView extends View {
     // Append new circle each time user presses on screen
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
 
-        Log.d(TAG, " onTouchEvent" + event);
-        int touchX = Math.round(event.getX());
-        int touchY = Math.round(event.getY());
-        Toast.makeText(this.getContext(), " Touch at " + touchX + " y= " + touchY, Toast.LENGTH_SHORT).show();
+                Log.d(TAG, " onTouchEvent" + event);
+                if (canvasTouch != null)
+                    canvasTouch.onTouchEvent(event);
+                break;
+        }
         return true;
     }
 
@@ -114,4 +121,13 @@ public class CustomView extends View {
     public void setHistoryList(List<Shape> historyList) {
         this.historyList = historyList;
     }
+
+    public CanvasTouch getCanvasTouch() {
+        return canvasTouch;
+    }
+
+    public void setCanvasTouch(CanvasTouch canvasTouch) {
+        this.canvasTouch = canvasTouch;
+    }
+
 }

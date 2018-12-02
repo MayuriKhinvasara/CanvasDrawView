@@ -37,7 +37,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.addShape(Shape.Type.CIRCLE);
+                shapesPresenter.addShapeRandom(Shape.Type.CIRCLE);
             }
         });
 
@@ -45,7 +45,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fabRect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.addShape(Shape.Type.RECTANGLE);
+                shapesPresenter.addShapeRandom(Shape.Type.RECTANGLE);
             }
         });
 
@@ -53,7 +53,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fabTriangle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.addShape(Shape.Type.TRIANGLE);
+                shapesPresenter.addShapeRandom(Shape.Type.TRIANGLE);
             }
         });
 
@@ -98,5 +98,6 @@ public class CanvasDrawActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
 
 }
