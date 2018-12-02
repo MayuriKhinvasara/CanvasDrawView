@@ -1,5 +1,6 @@
 package mk.android.com.canvasdrawview.view;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -13,7 +14,7 @@ import mk.android.com.canvasdrawview.R;
 import mk.android.com.canvasdrawview.model.Shape;
 import mk.android.com.canvasdrawview.presenter.ShapesPresenter;
 
-import static mk.android.com.canvasdrawview.view.CustomView.RADIUS;
+import static mk.android.com.canvasdrawview.presenter.ShapesPresenter.RADIUS;
 
 /**
  * Created by Mayuri Khinvasara on 01,December,2018
@@ -69,7 +70,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         //  maxX = Math.round(canvas.getWidth());
         //  maxY = Math.round(canvas.getHeight());
         int maxX = 1079 - RADIUS;
-        int maxY = 1420;
+        int maxY = 1350;
         shapesPresenter.setMaxX(maxX);
         shapesPresenter.setMaxY(maxY);
 
@@ -92,11 +93,22 @@ public class CanvasDrawActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_stats) {
+            startStatsView();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startStatsView() {
+     Intent intent = new Intent(this,StatsActivity.class);
+      Bundle bundle = new Bundle();
+      bundle.putSerializable("data", shapesPresenter.getShapeTypeCountMap());
+      // bundle.putExtra("data", shapesPresenter.getShapeTypeCountMap());
+       // intent.putExtras("data", (Serializable) shapesPresenter.getShapeTypeCountMap())
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
 

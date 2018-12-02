@@ -1,24 +1,27 @@
 package mk.android.com.canvasdrawview.model;
 
-import java.util.ArrayList;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 /**
  * Created by Mayuri Khinvasara on 01,December,2018
  */
-public class Shape {
+public class Shape implements Parcelable{
+    public static final int STATE_CREATE = -1;
     int x;
     int y;
     int width;
     Type type;
-    ArrayList<Shape> transformationList = new ArrayList<>();
     boolean visible = true;
     int actionNumber = 0;
+    int lastTranformIndex = STATE_CREATE;
 
     public Shape(int x, int y, int width) {
         this.x = x;
         this.y = y;
         this.width = width;
     }
+
 
     public enum Type {
         CIRCLE(0), RECTANGLE(1), TRIANGLE(2);
@@ -65,14 +68,6 @@ public class Shape {
         this.type = type;
     }
 
-    public ArrayList<Shape> getTransformationList() {
-        return transformationList;
-    }
-
-    public void setTransformationList(ArrayList<Shape> transformationList) {
-        this.transformationList = transformationList;
-    }
-
     public boolean isVisible() {
         return visible;
     }
@@ -88,4 +83,48 @@ public class Shape {
     public void setActionNumber(int actionNumber) {
         this.actionNumber = actionNumber;
     }
+
+    public int getLastTranformIndex() {
+        return lastTranformIndex;
+    }
+
+    public void setLastTranformIndex(int lastTranformIndex) {
+        this.lastTranformIndex = lastTranformIndex;
+    }
+    protected Shape(Parcel in) {
+        x = in.readInt();
+        y = in.readInt();
+        width = in.readInt();
+        visible = in.readByte() != 0;
+        actionNumber = in.readInt();
+        lastTranformIndex = in.readInt();
+    }
+
+    public static final Creator<Shape> CREATOR = new Creator<Shape>() {
+        @Override
+        public Shape createFromParcel(Parcel in) {
+            return new Shape(in);
+        }
+
+        @Override
+        public Shape[] newArray(int size) {
+            return new Shape[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(x);
+        dest.writeInt(y);
+        dest.writeInt(width);
+        dest.writeByte((byte) (visible ? 1 : 0));
+        dest.writeInt(actionNumber);
+        dest.writeInt(lastTranformIndex);
+    }
+
 }

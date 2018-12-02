@@ -23,11 +23,9 @@ import mk.android.com.canvasdrawview.presenter.ShapesPresenter;
  * Created by Mayuri Khinvasara on 01,December,2018
  */
 public class CustomView extends View {
-    private static final String TAG = "canvas123";
-    public static final int RADIUS = ShapesPresenter.RADIUS;
+    private  final String TAG = "canvas123";
+    public  final int RADIUS = ShapesPresenter.RADIUS;
     private Canvas canvas;
-    private int x = 50;
-    private int y = 50;
     List<Shape> historyList = new ArrayList<>();
     CanvasTouch canvasTouch;
 
@@ -55,7 +53,6 @@ public class CustomView extends View {
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
     }
 
-    // Let's draw three circles
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
@@ -81,7 +78,6 @@ public class CustomView extends View {
         }
     }
 
-    // Append new circle each time user presses on screen
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
