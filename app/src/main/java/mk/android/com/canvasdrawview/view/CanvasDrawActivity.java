@@ -77,7 +77,6 @@ public class CanvasDrawActivity extends AppCompatActivity {
         Log.d(TAG, " onCreate max x= " + maxX + " maxy = " + maxY);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -104,9 +103,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
     private void startStatsView() {
      Intent intent = new Intent(this,StatsActivity.class);
       Bundle bundle = new Bundle();
-      bundle.putSerializable("data", shapesPresenter.getShapeTypeCountMap());
-      // bundle.putExtra("data", shapesPresenter.getShapeTypeCountMap());
-       // intent.putExtras("data", (Serializable) shapesPresenter.getShapeTypeCountMap())
+      bundle.putSerializable("data", shapesPresenter.getCountByGroup());
         intent.putExtras(bundle);
         startActivity(intent);
     }

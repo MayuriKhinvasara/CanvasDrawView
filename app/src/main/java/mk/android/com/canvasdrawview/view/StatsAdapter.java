@@ -53,9 +53,10 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> 
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
-        String stats = " Shape : "+ Shape.Type.values()[position] + "  count : "+ mDataSet.get(Shape.Type.values()[position]);
+        Shape.Type type = (Shape.Type) mDataSet.keySet().toArray()[position];
+        String stats = " Shape : "+ type + "  count : "+ mDataSet.get(type);
         holder.mTextView.setText(stats);
-        Log.d("canvas1234", " stats = "+ stats+ " pos= "+position);
+        Log.d("canvas1234", " stats = "+ stats+ " pos= "+(position-1));
         }
 
     @Override

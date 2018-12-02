@@ -18,18 +18,12 @@ import mk.android.com.canvasdrawview.view.CustomView;
 public class ShapesPresenter {
     private static final String LOG_TAG = "canvas123";
     public static final int TOTAL_SHAPES = 3;
-    private static final int ACTION_SHAPE_CREATE = 0;
-    private static final int ACTION_SHAPE_DELETE = 1;
     private final CustomView canvas;
     public static final int RADIUS = 60;
-    int x;
-    int y;
     private int maxX;
     private int maxY;
-    HashMap<Type,Integer> shapeTypeCountMap = new HashMap<>();
-
     private static LinkedList<Shape> historyList = new LinkedList<>();
-    private int actionCount = 0;
+    private int actionSequence = 0;
 
     public ShapesPresenter(CustomView canvas) {
         this.canvas = canvas;
@@ -89,8 +83,8 @@ public class ShapesPresenter {
         return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
     }
 
-    private void generateRandomXAndY() {
-
+    private int[] generateRandomXAndY() {
+        int x,y;
         Random rn = new Random();
         int diff = maxX - RADIUS;
         x = rn.nextInt(diff + 1);
@@ -100,8 +94,8 @@ public class ShapesPresenter {
         diff = maxY - RADIUS;
         y = rn.nextInt(diff + 1);
         y += RADIUS;
-
         Log.d(LOG_TAG, " Random x= " + x + "y" + y);
+        return new int[]{x, y};
     }
 
     public int getMaxX() {
@@ -121,8 +115,8 @@ public class ShapesPresenter {
     }
 
     public void addShapeRandom(Type type ) {
-        generateRandomXAndY();
-        Shape shape = createShape(type, x, y);
+        int[] randomCordinates = generateRandomXAndY();
+        Shape shape = createShape(type, randomCordinates[0], randomCordinates[1]);
         upDateCanvas(shape);
     }
 
@@ -130,12 +124,12 @@ public class ShapesPresenter {
     private Shape createShape(Type type, int x, int y) {
 
         Shape shape = new Shape(x, y, RADIUS);
-        updateShapeCount(type , ACTION_SHAPE_CREATE);
+      //  historyList.add(new Circle(x,y,50));
         shape.setType(type);
         return shape;
     }
 
-    private void updateShapeCount(Type type,  int actionShape) {
+   /* private void updateShapeCount(Type type,  int actionShape) {
         int existingCnt =0 ;
         if( getShapeTypeCountMap().containsKey(type))
             existingCnt =  getShapeTypeCountMap().get(type);
@@ -144,12 +138,12 @@ public class ShapesPresenter {
         else
             existingCnt--;
         getShapeTypeCountMap().put(type,existingCnt);
-    }
+    }*/
 
     public void undo() {
 
         if (getHistoryList().size() > 0) {
-            actionCount--;
+            actionSequence--;
             Shape toDeleteShape = getHistoryList().getLast();
             if(toDeleteShape.getLastTranformIndex() != Shape.STATE_CREATE) {
                 int lastVisibleIndex = toDeleteShape.getLastTranformIndex();
@@ -157,9 +151,7 @@ public class ShapesPresenter {
                 lastVisibleShape.setVisibility(true);
                 getHistoryList().set(lastVisibleIndex, lastVisibleShape);
             }
-
             getHistoryList().removeLast();
-            updateShapeCount(toDeleteShape.getType(),ACTION_SHAPE_DELETE);
             canvas.setHistoryList(getHistoryList());
             canvas.invalidate();
         }
@@ -167,8 +159,8 @@ public class ShapesPresenter {
 
 
     private void upDateCanvas(Shape shape) {
-        Log.d(LOG_TAG, " upDateCanvas " + shape.getType() + " actiontype = "+actionCount);
-        shape.setActionNumber(actionCount++);
+        Log.d(LOG_TAG, " upDateCanvas " + shape.getType() + " actiontype = "+ actionSequence);
+        shape.setActionNumber(actionSequence++);
         getHistoryList().add(shape);
         canvas.setHistoryList(getHistoryList());
         canvas.invalidate();
@@ -182,28 +174,21 @@ public class ShapesPresenter {
         this.historyList = historyList;
     }
 
-    public HashMap<Type, Integer> getShapeTypeCountMap() {
-        return shapeTypeCountMap;
-    }
-
-    public void setShapeTypeCountMap(HashMap<Type, Integer> shapeTypeCountMap) {
-        this.shapeTypeCountMap = shapeTypeCountMap;
-    }
-    void getCountByGroup()
+    public HashMap<Type, Integer> getCountByGroup()
     {
-        for(Shape shape : historyList)
+        HashMap<Type,Integer> shapeTypeCountMap = new HashMap<>();
+        for(Shape shape : getHistoryList())
         {
             if(shape.isVisible())
             {
                 Type shapeType = shape.getType();
                 int existingCnt = 0;
-                if( getShapeTypeCountMap().containsKey(shape.getType()))
-                    existingCnt =  getShapeTypeCountMap().get(shape.getType());
-                    existingCnt++;
+                if( shapeTypeCountMap.containsKey(shape.getType()))
+                    existingCnt =  shapeTypeCountMap.get(shape.getType());
+                existingCnt++;
                 shapeTypeCountMap.put(shapeType,existingCnt);
             }
         }
-
-
+        return shapeTypeCountMap;
     }
 }

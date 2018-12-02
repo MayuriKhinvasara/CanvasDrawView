@@ -8,6 +8,11 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:layout="@layout/fragment_stats">
 
+    <TextView
+        android:id="@+id/emptyView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="No shapes on the screen yet !"/>
     <!-- A RecyclerView with some commonly used attributes -->
 <android.support.v7.widget.RecyclerView
 android:id="@+id/stats_recycler_view"

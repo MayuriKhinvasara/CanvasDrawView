@@ -8,6 +8,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.HashMap;
 
@@ -19,6 +20,7 @@ public class StatsActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private TextView statsEmptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,7 @@ public class StatsActivity extends AppCompatActivity {
         });
 
         mRecyclerView = (RecyclerView) findViewById(R.id.stats_recycler_view);
+        statsEmptyView = (TextView) findViewById(R.id.emptyView);
 
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
@@ -47,13 +50,14 @@ public class StatsActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         Bundle bundle = getIntent().getExtras();
-   //     HashMap<Type,Integer> shapeTypeCountMap = new HashMap<>();
         if(bundle!= null && bundle.containsKey("data")) {
             HashMap<Shape.Type, Integer> myDataset = (HashMap<Shape.Type, Integer>) bundle.getSerializable("data");
-            // specify an adapter (see also next example)
+            statsEmptyView.setVisibility(View.GONE);
             mAdapter = new StatsAdapter(myDataset);
             mRecyclerView.setAdapter(mAdapter);
         }
+        else
+            statsEmptyView.setVisibility(View.VISIBLE);
     }
 
 }
