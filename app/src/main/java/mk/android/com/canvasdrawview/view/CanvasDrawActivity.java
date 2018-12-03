@@ -9,12 +9,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 import mk.android.com.canvasdrawview.R;
 import mk.android.com.canvasdrawview.model.Shape;
 import mk.android.com.canvasdrawview.presenter.ShapesPresenter;
-
-import static mk.android.com.canvasdrawview.presenter.ShapesPresenter.RADIUS;
 
 /**
  * Created by Mayuri Khinvasara on 01,December,2018
@@ -23,6 +22,8 @@ public class CanvasDrawActivity extends AppCompatActivity {
     private static final String TAG = "canvas123";
     private CustomView canvas = null;
     ShapesPresenter shapesPresenter;
+    private int maxY = 800;
+    private int maxX = 600;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,11 +32,36 @@ public class CanvasDrawActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         this.canvas = (CustomView) this.findViewById(R.id.canvasDrawView);
-        Log.d(TAG, " onCreate" + canvas);
-        shapesPresenter = new ShapesPresenter(canvas);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        shapesPresenter = new ShapesPresenter(canvas, this);
+        setupActionButtons();
+        getCanvasWidthAndHeight();
+    }
+
+    private void getCanvasWidthAndHeight() {
+        ViewTreeObserver viewTreeObserver = canvas.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+
+                    canvas.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    maxY = canvas.getHeight();
+                    maxX = canvas.getWidth();
+                    //Reduce radius so that shape isn't left incomplete at the edge
+                    shapesPresenter.setMaxX(maxX - ShapesPresenter.RADIUS);
+                    int bottomButtonHeight = 100;
+                    shapesPresenter.setMaxY(maxY - ShapesPresenter.RADIUS - bottomButtonHeight);
+                    removeOnGlobalLayoutListener(canvas, this);
+                    Log.d(TAG, " Screen max x= " + maxX + " maxy = " + maxY);
+                }
+            });
+        }
+    }
+
+    private void setupActionButtons() {
+        FloatingActionButton fabCircle = (FloatingActionButton) findViewById(R.id.fabCircle);
+        fabCircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 shapesPresenter.addShapeRandom(Shape.Type.CIRCLE);
@@ -46,7 +72,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fabRect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.addShapeRandom(Shape.Type.RECTANGLE);
+                shapesPresenter.addShapeRandom(Shape.Type.SQUARE);
             }
         });
 
@@ -66,15 +92,6 @@ public class CanvasDrawActivity extends AppCompatActivity {
                 shapesPresenter.undo();
             }
         });
-
-        //  maxX = Math.round(canvas.getWidth());
-        //  maxY = Math.round(canvas.getHeight());
-        int maxX = 1079 - RADIUS;
-        int maxY = 1350;
-        shapesPresenter.setMaxX(maxX);
-        shapesPresenter.setMaxY(maxY);
-
-        Log.d(TAG, " onCreate max x= " + maxX + " maxy = " + maxY);
     }
 
     @Override
@@ -86,27 +103,24 @@ public class CanvasDrawActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_stats) {
             startStatsView();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
     private void startStatsView() {
-     Intent intent = new Intent(this,StatsActivity.class);
-      Bundle bundle = new Bundle();
-      bundle.putSerializable("data", shapesPresenter.getCountByGroup());
+        Intent intent = new Intent(this, StatsActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("data", shapesPresenter.getCountByGroup());
         intent.putExtras(bundle);
         startActivity(intent);
     }
 
-
+    //Since global layout listner is called multiple times, remove it once we get the screem width and height
+    public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener) {
+        v.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
+    }
 }

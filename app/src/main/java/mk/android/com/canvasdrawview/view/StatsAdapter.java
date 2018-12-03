@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,22 +20,29 @@ import mk.android.com.canvasdrawview.model.Shape;
  * Created by Mayuri Khinvasara on 02,December,2018
  */
 public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> {
-    private final HashMap<Shape.Type, Integer> mDataSet ;
+    private final HashMap<Shape.Type, Integer> mDataSet;
 
     private Context mContext;
-    public StatsAdapter(HashMap<Shape.Type, Integer> myDataset) {
-       // this.mContext = context;
+    private OnItemClicked onClick;
+
+    public StatsAdapter(HashMap<Shape.Type, Integer> myDataset, StatsActivity context, OnItemClicked onClick) {
+        this.mContext = context;
         this.mDataSet = myDataset;
+        this.onClick = onClick;
     }
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
+
+    public interface OnItemClicked {
+        void onItemClick(int position);
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private final ImageButton mDeleteButton;
         public TextView mTextView;
+
         public ViewHolder(View v) {
             super(v);
-            mTextView = v.findViewById(R.id.textViewStats);
+            mTextView = (TextView) v.findViewById(R.id.textViewStats);
+            mDeleteButton = (ImageButton) v.findViewById(R.id.deleteShape);
         }
     }
 
@@ -49,21 +57,26 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final StatsAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final StatsAdapter.ViewHolder holder,  int position) {
 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         Shape.Type type = (Shape.Type) mDataSet.keySet().toArray()[position];
-        String stats = " Shape : "+ type + "  count : "+ mDataSet.get(type);
+        String stats = " Shape : " + type + "  count : " + mDataSet.get(type);
         holder.mTextView.setText(stats);
-        Log.d("canvas1234", " stats = "+ stats+ " pos= "+(position-1));
-        }
+        Log.d("canvas1234", " stats = " + stats + " pos= " + (position - 1));
+        holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClick.onItemClick(holder.getAdapterPosition());
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
-        if(mDataSet == null)
-            return  0;
-        Log.d("canvas1234", "getItemCount :"+mDataSet.size());
+        if (mDataSet == null)
+            return 0;
         return mDataSet.size();
     }
 }

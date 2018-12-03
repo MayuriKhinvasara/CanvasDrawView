@@ -7,14 +7,14 @@ import android.os.Parcelable;
  * Created by Mayuri Khinvasara on 01,December,2018
  */
 public class Shape implements Parcelable{
-    public static final int STATE_CREATE = -1;
-    int x;
-    int y;
-    int width;
-    Type type;
-    boolean visible = true;
-    int actionNumber = 0;
-    int lastTranformIndex = STATE_CREATE;
+    public static final int ACTION_CREATE = -1;
+    private int x;
+    private int y;
+    private int width;
+    private Type type;
+    private boolean visible = true;
+    private int actionNumber = 0;
+    private int lastTranformIndex = ACTION_CREATE;
 
     public Shape(int x, int y, int width) {
         this.x = x;
@@ -22,9 +22,8 @@ public class Shape implements Parcelable{
         this.width = width;
     }
 
-
     public enum Type {
-        CIRCLE(0), RECTANGLE(1), TRIANGLE(2);
+        CIRCLE(0), SQUARE(1), TRIANGLE(2);
         public final int value;
 
         Type(int i) {

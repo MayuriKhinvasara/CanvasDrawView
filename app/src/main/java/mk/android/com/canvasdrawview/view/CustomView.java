@@ -9,10 +9,12 @@ import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import mk.android.com.canvasdrawview.model.Shape;
@@ -23,11 +25,12 @@ import mk.android.com.canvasdrawview.presenter.ShapesPresenter;
  * Created by Mayuri Khinvasara on 01,December,2018
  */
 public class CustomView extends View {
-    private  final String TAG = "canvas123";
-    public  final int RADIUS = ShapesPresenter.RADIUS;
+    private final String TAG = "canvas1234";
+    public final int RADIUS = ShapesPresenter.RADIUS;
     private Canvas canvas;
     List<Shape> historyList = new ArrayList<>();
     CanvasTouch canvasTouch;
+    private boolean longPressDone;
 
     public CustomView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -54,12 +57,16 @@ public class CustomView extends View {
     }
 
     @Override
+    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
+        return super.onKeyLongPress(keyCode, event);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         this.canvas = canvas;
         Log.d(TAG, "  onDraw called");
         for (Shape shape : getHistoryList()) {
-            // for(Shape shape1 : shape.getTransformationList()){
             if (shape.isVisible()) {
                 switch (shape.getType()) {
                     case CIRCLE:
@@ -67,7 +74,7 @@ public class CustomView extends View {
                         canvas.drawCircle(shape.getX(), shape.getY(), RADIUS, drawPaint);
                         break;
 
-                    case RECTANGLE:
+                    case SQUARE:
                         drawRectangle(shape.getX(), shape.getY());
                         break;
                     case TRIANGLE:
@@ -78,14 +85,54 @@ public class CustomView extends View {
         }
     }
 
+    private boolean longClickActive = false;
+    float initialTouchX = 0;
+    float initialTouchY = 0;
+    private static final int MIN_CLICK_DURATION = 1000;
+    private long startClickTime = 0;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.d("canvas12345", " ACTION_DOWN");
 
-                Log.d(TAG, " onTouchEvent" + event);
-                if (canvasTouch != null)
-                    canvasTouch.onTouchEvent(event);
+                initialTouchX = event.getX();
+                initialTouchY = event.getY();
+                longPressDone = false;
+                if (!longClickActive) {
+                    longClickActive = true;
+                    startClickTime = Calendar.getInstance().getTimeInMillis();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+                Log.d("canvas12345", " ACTION_UP");
+                long currentTime = Calendar.getInstance().getTimeInMillis();
+                long clickDuration = currentTime - startClickTime;
+                if (clickDuration <= MIN_CLICK_DURATION && !longPressDone) {
+                    //normal click
+                    if (canvasTouch != null) {
+                        canvasTouch.onClickEvent(event);
+                    }
+                    longClickActive = false;
+                    startClickTime = Calendar.getInstance().getTimeInMillis();
+                    return false;
+                }
+                break;
+            case MotionEvent.ACTION_MOVE:
+                Log.d("canvas12345", " ACTION_MOVE");
+                currentTime = Calendar.getInstance().getTimeInMillis();
+                clickDuration = currentTime - startClickTime;
+                if (clickDuration >= MIN_CLICK_DURATION) {
+                    if (canvasTouch != null) {
+                        canvasTouch.onLongPressEvent(initialTouchX, initialTouchY);
+                    }
+                    longClickActive = false;
+                    longPressDone = true;
+                    startClickTime = Calendar.getInstance().getTimeInMillis();
+                    return false;
+                }
                 break;
         }
         return true;

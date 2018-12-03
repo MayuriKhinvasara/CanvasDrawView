@@ -14,8 +14,8 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:layout_height="?android:attr/actionBarSize"
+            android:background="?android:attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
     </android.support.design.widget.AppBarLayout>
@@ -23,7 +23,7 @@
     <include layout="@layout/content_canvas_draw" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/fabCircle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_vertical"
@@ -56,18 +56,19 @@
         android:layout_height="wrap_content"
         android:layout_gravity="left"
         android:layout_margin="@dimen/fab_margin"
-        app:layout_anchor="@id/fabRect"
-        app:layout_anchorGravity="bottom"
         android:tooltipText="Circle"
-/>
-    <TextView android:layout_height="wrap_content"
+        app:layout_anchor="@id/fabRect"
+        app:layout_anchorGravity="bottom" />
+
+    <TextView
         android:layout_width="wrap_content"
-        android:text="Undo"
+        android:layout_height="wrap_content"
         android:elevation="6dp"
-        android:textSize="16dp"
+        android:text="Undo"
         android:textColor="#fff"
+        android:textSize="16dp"
         app:layout_anchor="@id/fabUndo"
-        app:layout_anchorGravity="center"/>
+        app:layout_anchorGravity="center" />
 
 
 </android.support.design.widget.CoordinatorLayout>
