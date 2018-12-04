@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -19,14 +18,15 @@ import java.util.List;
 
 import mk.android.com.canvasdrawview.model.Shape;
 import mk.android.com.canvasdrawview.presenter.CanvasTouch;
-import mk.android.com.canvasdrawview.presenter.ShapesPresenter;
+import mk.android.com.canvasdrawview.util.Constants;
 
 /**
  * Created by Mayuri Khinvasara on 01,December,2018
  */
 public class CustomView extends View {
-    private final String TAG = "canvas1234";
-    public final int RADIUS = ShapesPresenter.RADIUS;
+    private static final String LOG_TAG = CustomView.class.getSimpleName();
+    private final String TAG = CustomView.class.getSimpleName();
+    public final int RADIUS = Constants.INSTANCE.getRADIUS();
     private Canvas canvas;
     List<Shape> historyList = new ArrayList<>();
     CanvasTouch canvasTouch;
@@ -40,25 +40,18 @@ public class CustomView extends View {
         Log.d(TAG, "  constructor called");
     }
 
-    // setup initial color
-    private final int paintColor = Color.BLACK;
     // defines paint and canvas
     private Paint drawPaint;
 
     // Setup paint with color and stroke styles
     private void setupPaint() {
         drawPaint = new Paint();
-        drawPaint.setColor(paintColor);
+        drawPaint.setColor(Color.BLUE);
         drawPaint.setAntiAlias(true);
         drawPaint.setStrokeWidth(5);
         drawPaint.setStyle(Paint.Style.FILL_AND_STROKE);
         drawPaint.setStrokeJoin(Paint.Join.ROUND);
         drawPaint.setStrokeCap(Paint.Cap.ROUND);
-    }
-
-    @Override
-    public boolean onKeyLongPress(int keyCode, KeyEvent event) {
-        return super.onKeyLongPress(keyCode, event);
     }
 
     @Override
@@ -71,14 +64,13 @@ public class CustomView extends View {
                 switch (shape.getType()) {
                     case CIRCLE:
                         drawPaint.setColor(Color.BLUE);
-                        canvas.drawCircle(shape.getX(), shape.getY(), RADIUS, drawPaint);
+                        canvas.drawCircle(shape.getxCordinate(), shape.getyCordinate(), RADIUS, drawPaint);
                         break;
-
                     case SQUARE:
-                        drawRectangle(shape.getX(), shape.getY());
+                        drawRectangle(shape.getxCordinate(), shape.getyCordinate());
                         break;
                     case TRIANGLE:
-                        drawTriangle(shape.getX(), shape.getY(), (int) (2 * RADIUS));
+                        drawTriangle(shape.getxCordinate(), shape.getyCordinate(), (int) (2 * RADIUS));
                         break;
                 }
             }
@@ -96,7 +88,7 @@ public class CustomView extends View {
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                Log.d("canvas12345", " ACTION_DOWN");
+                Log.d(LOG_TAG, " ACTION_DOWN");
 
                 initialTouchX = event.getX();
                 initialTouchY = event.getY();
@@ -107,7 +99,7 @@ public class CustomView extends View {
                 }
                 break;
             case MotionEvent.ACTION_UP:
-                Log.d("canvas12345", " ACTION_UP");
+                Log.d(LOG_TAG, " ACTION_UP");
                 long currentTime = Calendar.getInstance().getTimeInMillis();
                 long clickDuration = currentTime - startClickTime;
                 if (clickDuration <= MIN_CLICK_DURATION && !longPressDone) {
@@ -121,7 +113,7 @@ public class CustomView extends View {
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                Log.d("canvas12345", " ACTION_MOVE");
+                Log.d(LOG_TAG, " ACTION_MOVE");
                 currentTime = Calendar.getInstance().getTimeInMillis();
                 clickDuration = currentTime - startClickTime;
                 if (clickDuration >= MIN_CLICK_DURATION) {
@@ -138,12 +130,18 @@ public class CustomView extends View {
         return true;
     }
 
+     double squareSideHalf = 1 / Math.sqrt(2);
+    //Consider pivot x,y as centroid.
+
     public void drawRectangle(int x, int y) {
         drawPaint.setColor(Color.RED);
-        Rect rectangle = new Rect((int) (x - ((0.8) * RADIUS)), (int) (y - ((0.6) * RADIUS)), (int) (x + ((0.8) * RADIUS)), (int) (y + ((0.6 * RADIUS))));
+        Rect rectangle = new Rect((int) (x - (squareSideHalf * RADIUS)), (int) (y - (squareSideHalf * RADIUS)), (int) (x + (squareSideHalf * RADIUS)), (int) (y + ((squareSideHalf * RADIUS))));
         canvas.drawRect(rectangle, drawPaint);
     }
 
+    /*
+    select three vertices of triangle. Draw 3 lines between them to form a traingle
+     */
     public void drawTriangle(int x, int y, int width) {
         drawPaint.setColor(Color.GREEN);
         int halfWidth = width / 2;

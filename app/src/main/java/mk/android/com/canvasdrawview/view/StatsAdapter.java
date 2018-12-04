@@ -20,7 +20,8 @@ import mk.android.com.canvasdrawview.model.Shape;
  * Created by Mayuri Khinvasara on 02,December,2018
  */
 public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> {
-    private final HashMap<Shape.Type, Integer> mDataSet;
+
+    private HashMap<Shape.Type, Integer> mDataSet;
 
     private Context mContext;
     private OnItemClicked onClick;
@@ -62,7 +63,7 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> 
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
         Shape.Type type = (Shape.Type) mDataSet.keySet().toArray()[position];
-        String stats = " Shape : " + type + "  count : " + mDataSet.get(type);
+        String stats = " Shape : " + type + "  Count : " + mDataSet.get(type);
         holder.mTextView.setText(stats);
         Log.d("canvas1234", " stats = " + stats + " pos= " + (position - 1));
         holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
@@ -78,5 +79,9 @@ public class StatsAdapter extends RecyclerView.Adapter<StatsAdapter.ViewHolder> 
         if (mDataSet == null)
             return 0;
         return mDataSet.size();
+    }
+
+    public void setmDataSet(HashMap<Shape.Type, Integer> mDataSet) {
+        this.mDataSet = mDataSet;
     }
 }

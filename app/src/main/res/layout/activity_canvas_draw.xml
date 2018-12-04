@@ -20,15 +20,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_canvas_draw" />
+    <include
+        android:id="@+id/include"
+        layout="@layout/content_canvas_draw" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabCircle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_vertical"
-        android:layout_margin="@dimen/fab_margin"
-        android:tooltipText="Circle"
+        android:layout_gravity="start"
+        android:layout_marginEnd="30dp"
+        app:layout_anchor="@+id/fabRect"
+        app:layout_anchorGravity="bottom|left"
+        app:rippleColor="@android:color/darker_gray"
         app:srcCompat="@drawable/circle" />
 
     <android.support.design.widget.FloatingActionButton
@@ -37,28 +41,29 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:tooltipText="Circle"
         app:srcCompat="@drawable/rectangle" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabTriangle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
+        app:layout_anchor="@+id/fabCircle"
+        app:layout_anchorGravity="bottom|left"
+        android:layout_gravity="start"
+        android:layout_marginEnd="30dp"
+        app:rippleColor="@android:color/darker_gray"
         android:layout_margin="@dimen/fab_margin"
         android:tooltipText="Circle"
-
         app:srcCompat="@drawable/triangle" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabUndo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
         android:layout_margin="@dimen/fab_margin"
         android:tooltipText="Circle"
-        app:layout_anchor="@id/fabRect"
-        app:layout_anchorGravity="bottom" />
+        android:layout_gravity="bottom|center_vertical"
+        />
 
     <TextView
         android:layout_width="wrap_content"

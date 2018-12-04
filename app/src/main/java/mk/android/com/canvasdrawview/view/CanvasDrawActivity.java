@@ -13,17 +13,18 @@ import android.view.ViewTreeObserver;
 
 import mk.android.com.canvasdrawview.R;
 import mk.android.com.canvasdrawview.model.Shape;
-import mk.android.com.canvasdrawview.presenter.ShapesPresenter;
+import mk.android.com.canvasdrawview.presenter.CanvasPresenter;
+import mk.android.com.canvasdrawview.util.Constants;
 
 /**
  * Created by Mayuri Khinvasara on 01,December,2018
  */
 public class CanvasDrawActivity extends AppCompatActivity {
-    private static final String TAG = "canvas123";
+    private static final String TAG = CanvasDrawActivity.class.getSimpleName();
     private CustomView canvas = null;
-    ShapesPresenter shapesPresenter;
-    private int maxY = 800;
-    private int maxX = 600;
+    CanvasPresenter canvasPresenter;
+    private int maxY = 800; // average screen height
+    private int maxX = 600; //average screen height
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,30 +34,9 @@ public class CanvasDrawActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         this.canvas = (CustomView) this.findViewById(R.id.canvasDrawView);
 
-        shapesPresenter = new ShapesPresenter(canvas, this);
+        canvasPresenter = new CanvasPresenter(canvas, this);
         setupActionButtons();
         getCanvasWidthAndHeight();
-    }
-
-    private void getCanvasWidthAndHeight() {
-        ViewTreeObserver viewTreeObserver = canvas.getViewTreeObserver();
-        if (viewTreeObserver.isAlive()) {
-            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-
-                    canvas.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    maxY = canvas.getHeight();
-                    maxX = canvas.getWidth();
-                    //Reduce radius so that shape isn't left incomplete at the edge
-                    shapesPresenter.setMaxX(maxX - ShapesPresenter.RADIUS);
-                    int bottomButtonHeight = 100;
-                    shapesPresenter.setMaxY(maxY - ShapesPresenter.RADIUS - bottomButtonHeight);
-                    removeOnGlobalLayoutListener(canvas, this);
-                    Log.d(TAG, " Screen max x= " + maxX + " maxy = " + maxY);
-                }
-            });
-        }
     }
 
     private void setupActionButtons() {
@@ -64,7 +44,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fabCircle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.addShapeRandom(Shape.Type.CIRCLE);
+                canvasPresenter.addShapeRandom(Shape.Type.CIRCLE);
             }
         });
 
@@ -72,7 +52,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fabRect.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.addShapeRandom(Shape.Type.SQUARE);
+                canvasPresenter.addShapeRandom(Shape.Type.SQUARE);
             }
         });
 
@@ -80,7 +60,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fabTriangle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.addShapeRandom(Shape.Type.TRIANGLE);
+                canvasPresenter.addShapeRandom(Shape.Type.TRIANGLE);
             }
         });
 
@@ -89,7 +69,7 @@ public class CanvasDrawActivity extends AppCompatActivity {
         fabUndo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                shapesPresenter.undo();
+                canvasPresenter.undo();
             }
         });
     }
@@ -113,13 +93,32 @@ public class CanvasDrawActivity extends AppCompatActivity {
 
     private void startStatsView() {
         Intent intent = new Intent(this, StatsActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("data", shapesPresenter.getCountByGroup());
-        intent.putExtras(bundle);
         startActivity(intent);
     }
 
-    //Since global layout listner is called multiple times, remove it once we get the screem width and height
+    private void getCanvasWidthAndHeight() {
+        ViewTreeObserver viewTreeObserver = canvas.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+
+                    canvas.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    maxY = canvas.getHeight();
+                    maxX = canvas.getWidth();
+                    //Reduce radius so that shape isn't left incomplete at the edge
+                    canvasPresenter.setMaxX(maxX - Constants.INSTANCE.getRADIUS());
+                    int bottomButtonHeight = 100;
+                    canvasPresenter.setMaxY(maxY - Constants.INSTANCE.getRADIUS() - bottomButtonHeight);
+                    removeOnGlobalLayoutListener(canvas, this);
+                    Log.d(TAG, " Screen max x= " + maxX + " maxy = " + maxY);
+                }
+            });
+        }
+    }
+
+    /*Since global layout listener is called multiple times, remove it once we get the screen width and height
+     */
     public static void removeOnGlobalLayoutListener(View v, ViewTreeObserver.OnGlobalLayoutListener listener) {
         v.getViewTreeObserver().removeOnGlobalLayoutListener(listener);
     }
