@@ -4,7 +4,7 @@
 
 Features Implemented:
 
-1. Create a custom view canvas.
+1. Create a Custom View canvas.
 2. Create Shapes like Circle, Triangle And Rectangle
 3. Display buttons on screen, to add these shapes at random positions in screen.
 4. Taping on a button will transform that shape to another shape.
@@ -18,5 +18,16 @@ About UI
 I have tried to create minimal UI, focussing more on code functionality , simplicity and architecture.
 
 About Data Structures
-As a data structure I have used, LinkedList of Shape objects to suit the required functionalities and minimize time and space complexity.
+Used 'LinkedList' of Shape objects to suit the required functionalities and minimize time and space complexity.
+
+## Screenshots
+
+<img alt="Canvas Main Page" height="450px" src="CanvasShapes.png" />
+
+## Built With
+
+* [Android Studio](https://developer.android.com/studio/index.html) - The Official IDE for Android
+* [Java] (https://www.oracle.com/technetwork/java/javase/overview/java8-2100321.html)
+* [Kotlin](https://kotlinlang.org/) - The Official Language for Android
+* [Gradle](https://gradle.org/) - Build tool for Android Studio
 
