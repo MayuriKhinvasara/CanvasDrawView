@@ -31,3 +31,6 @@ Used 'LinkedList' of Shape objects to suit the required functionalities and mini
 * [Kotlin](https://kotlinlang.org/) - The Official Language for Android
 * [Gradle](https://gradle.org/) - Build tool for Android Studio
 
+## Article Publication
+A detailed article explaining canvas creation and custom drawing for this repo is [here](https://medium.com/@mayuri.k18/android-canvas-for-drawing-and-custom-views-e1a3e90d468b)
+
